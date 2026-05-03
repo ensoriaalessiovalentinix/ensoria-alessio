@@ -1,0 +1,50 @@
+{
+  "schema": "acpx.session.v1",
+  "acpx_record_id": "agent:claude:acp:758ae61a-2d0c-4b9a-bdf1-78b92436cfbc:oneshot:2a85c5a1-5a36-44ea-b149-c45eada2d33b",
+  "acp_session_id": "b7bf13ad-8b59-4036-b5e5-7eab19afdd87",
+  "agent_command": "\"/opt/homebrew/Cellar/node/25.9.0_2/bin/node\" \"/Users/alessio/.openclaw/acpx/claude-agent-acp-wrapper.mjs\"",
+  "cwd": "/Users/alessio/.openclaw/workspace",
+  "name": "agent:claude:acp:758ae61a-2d0c-4b9a-bdf1-78b92436cfbc",
+  "created_at": "2026-05-01T18:48:38.488Z",
+  "last_used_at": "2026-05-01T18:48:38.488Z",
+  "last_seq": 0,
+  "event_log": {
+    "active_path": "/Users/alessio/.acpx/sessions/agent%3Aclaude%3Aacp%3A758ae61a-2d0c-4b9a-bdf1-78b92436cfbc%3Aoneshot%3A2a85c5a1-5a36-44ea-b149-c45eada2d33b.stream.ndjson",
+    "segment_count": 5,
+    "max_segment_bytes": 67108864,
+    "max_segments": 5,
+    "last_write_error": null
+  },
+  "closed": false,
+  "pid": 10119,
+  "agent_started_at": "2026-05-01T18:48:37.724Z",
+  "protocol_version": 1,
+  "agent_capabilities": {
+    "_meta": {
+      "claudeCode": {
+        "promptQueueing": true
+      }
+    },
+    "promptCapabilities": {
+      "image": true,
+      "embeddedContext": true
+    },
+    "mcpCapabilities": {
+      "http": true,
+      "sse": true
+    },
+    "loadSession": true,
+    "sessionCapabilities": {
+      "fork": {},
+      "list": {},
+      "resume": {},
+      "close": {}
+    }
+  },
+  "title": null,
+  "messages": [],
+  "updated_at": "2026-05-01T18:48:38.488Z",
+  "cumulative_token_usage": {},
+  "request_token_usage": {},
+  "acpx": {}
+}

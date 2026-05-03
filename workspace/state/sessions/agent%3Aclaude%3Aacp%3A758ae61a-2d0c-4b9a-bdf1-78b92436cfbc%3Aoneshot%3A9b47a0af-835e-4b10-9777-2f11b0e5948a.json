@@ -1,0 +1,63 @@
+{
+  "schema": "acpx.session.v1",
+  "acpx_record_id": "agent:claude:acp:758ae61a-2d0c-4b9a-bdf1-78b92436cfbc:oneshot:9b47a0af-835e-4b10-9777-2f11b0e5948a",
+  "acp_session_id": "32c0f745-e55a-499a-945f-c47eb38d749f",
+  "agent_command": "npx -y @agentclientprotocol/claude-agent-acp@^0.31.0",
+  "cwd": "/Users/alessio/.openclaw/workspace",
+  "name": "agent:claude:acp:758ae61a-2d0c-4b9a-bdf1-78b92436cfbc",
+  "created_at": "2026-04-28T15:04:35.297Z",
+  "last_used_at": "2026-04-28T15:04:35.297Z",
+  "last_seq": 0,
+  "event_log": {
+    "active_path": "/Users/alessio/.acpx/sessions/agent%3Aclaude%3Aacp%3A758ae61a-2d0c-4b9a-bdf1-78b92436cfbc%3Aoneshot%3A9b47a0af-835e-4b10-9777-2f11b0e5948a.stream.ndjson",
+    "segment_count": 5,
+    "max_segment_bytes": 67108864,
+    "max_segments": 5,
+    "last_write_error": null
+  },
+  "closed": true,
+  "closed_at": "2026-04-28T15:04:38.084Z",
+  "pid": 62934,
+  "agent_started_at": "2026-04-28T15:04:36.032Z",
+  "last_agent_exit_code": null,
+  "last_agent_exit_signal": null,
+  "last_agent_exit_at": "2026-04-28T15:04:38.058Z",
+  "last_agent_disconnect_reason": "connection_close",
+  "protocol_version": 1,
+  "agent_capabilities": {
+    "_meta": {
+      "claudeCode": {
+        "promptQueueing": true
+      }
+    },
+    "promptCapabilities": {
+      "image": true,
+      "embeddedContext": true
+    },
+    "mcpCapabilities": {
+      "http": true,
+      "sse": true
+    },
+    "loadSession": true,
+    "sessionCapabilities": {
+      "fork": {},
+      "list": {},
+      "resume": {},
+      "close": {}
+    }
+  },
+  "title": null,
+  "messages": [],
+  "updated_at": "2026-04-28T15:04:35.297Z",
+  "cumulative_token_usage": {},
+  "request_token_usage": {},
+  "acpx": {
+    "current_model_id": "default",
+    "available_models": [
+      "default",
+      "sonnet[1m]",
+      "opus[1m]",
+      "haiku"
+    ]
+  }
+}

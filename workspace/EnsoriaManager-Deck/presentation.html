@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ensoria Manager — Proposal Deck</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --fg: #e9eefc;
+      --card: #141a2b;
+      --accent: #7c3aed;
+      --muted: #94a3b8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; background:var(--bg); color:var(--fg);
+    }
+    .deck{ height:100%; width:100%; display:flex; align-items:stretch; justify-content:center; }
+    .slide{
+      width: min(1100px, 95%);
+      height: calc(100% - 40px);
+      margin: 20px; padding: 28px; border-radius: 20px; background: linear-gradient(135deg, rgba(20,26,43,.95), rgba(20,26,43,.85));
+      box-shadow: 0 10px 40px rgba(0,0,0,.3);
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .slide h1{ font-size: 2.2rem; margin:0 0 8px; letter-spacing:.2px }
+    .slide h2{ font-size:1.25rem; color:var(--muted); font-weight:600; margin:6px 0 16px}
+    .slide p{ line-height:1.6; color:#e8ebf8 }
+    .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+    .card{ background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:14px; }
+    .foot{ font-size:.88rem; color:#a8b3c7; margin-top:8px }
+    .kbd{ font-family: ui-monospace,SFMono-Regular,Monaco,monospace; background:#111827; padding:2px 6px; border-radius:6px; border:1px solid #374151; color:#e5e7eb }
+    header{ display:flex; align-items:center; justify-content:space-between; padding:8px 16px; background: #0b1020; border-bottom: 1px solid #1f2a47; position: sticky; top:0;}
+    nav{ display:flex; gap:12px; align-items:center; }
+    button{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; background:#1e1f2a; color:white; font-weight:600}
+    button.secondary{ background:#2a2f43; }
+    .dots{ display:flex; gap:6px; align-items:center; justify-content:center; padding:8px 0; }
+    .dot{ width:9px; height:9px; border-radius:50%; background:#2e3a82; opacity:.5 }
+    .dot.active{ background:#7c3aed; opacity:1 }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns:1fr; }
+      .slide{ height:auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="font-weight:700;letter-spacing:1px">Ensoria Manager</div>
+    <div>
+      <span class="kbd">Deck</span>
+    </div>
+  </header>
+  <main class="deck" aria-label="Deck di presentazione">
+    <section class="slide" id="slide-1" style="display:block;">
+      <div>
+        <h1>Ensoria Manager — Proposal Deck</h1>
+        <h2>Presentazione per Anna e Alessandro (3 soci) + Ensoria</h2>
+      </div>
+      <p>Obiettivo: validare la visione, allineare i partner e definire l’MPV di Ensoria Manager, con workflow collaborativo symbiotico tra AleX e Ensoria.</p>
+      <div class="foot">⌛ Ultimo update: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+    </section>
+    <section class="slide" id="slide-2" style="display:none;">
+      <div>
+        <h1>Proposta di valore</h1>
+        <h2>Perché ex saremo vincenti</h2>
+      </div>
+      <div class="grid">
+        <div class="card"><strong>Unicità</strong><br/>CRM modulare 3-persone + Ensoria; single source of truth; cross-channel inbox</div>
+        <div class="card"><strong>Efficienza</strong><br/>Workflow di review simbiotico; riduzione time-to-market</div>
+      </div>
+      <div class="foot">Slide 2 of 6</div>
+    </section>
+    <section class="slide" id="slide-3" style="display:none;">
+      <div>
+        <h1>Modello di business</h1>
+        <h2>Benessere collaborativo e valore condiviso</h2>
+      </div>
+      <div class="grid">
+        <div class="card"><strong>Target</strong><br/>PMF per team di 3 persone + supporto ENSORIA</div>
+        <div class="card"><strong>Metriche</strong><br/>ACV, retention, time-to-delivery</div>
+      </div>
+      <div class="foot">Slide 3 of 6</div>
+    </section>
+    <section class="slide" id="slide-4" style="display:none;">
+      <div>
+        <h1>Roadmap MVP</h1>
+        <h2>Fasi di implementazione</h2>
+      </div>
+      <div class="grid">
+        <div class="card"><strong>Fase 1</strong><br/>Discovery completa, specifiche CRMSpec</div>
+        <div class="card"><strong>Fase 2</strong><br/>Backend API + Frontend UI, MVP</div>
+      </div>
+      <div class="foot">Slide 4 of 6</div>
+    </section>
+    <section class="slide" id="slide-5" style="display:none;">
+      <div>
+        <h1>Team & Ruoli</h1>
+        <h2>Anna, Alessandro, AleX (Ensoria)</h2>
+      </div>
+      <div class="grid">
+        <div class="card"><strong>Ruolo</strong><br/>Partner & stakeholder</div>
+        <div class="card"><strong>Ruolo</strong><br/>Decision maker & product owner</div>
+        <div class="card"><strong>Ruolo</strong><br/>Ensoria — AI collaborator</div>
+      </div>
+      <div class="foot">Slide 5 of 6</div>
+    </section>
+    <section class="slide" id="slide-6" style="display:none;">
+      <div>
+        <h1>Call to Action</h1>
+        <h2>Confermi la direzione? Approvazione MVP</h2>
+      </div>
+      <div class="grid">
+        <div class="card"><strong>Decisione</strong><br/>Go/No-Go per MVP</div>
+        <div class="card"><strong>Next</strong><br/>Avvio Fase 2 dopo feedback</div>
+      </div>
+      <div class="foot">Slide 6 of 6</div>
+    </section>
+    <div class="dots" aria-label="Pulsanti di navigazione deck">
+      <span class="dot active" data-index="1"></span>
+      <span class="dot" data-index="2"></span>
+      <span class="dot" data-index="3"></span>
+      <span class="dot" data-index="4"></span>
+      <span class="dot" data-index="5"></span>
+      <span class="dot" data-index="6"></span>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      if (!slides.length) return; // Exit if no slides found
+      let current = 0; // Start with the first slide (index 0)
+      
+      function show(i){
+        // Constrain index within bounds
+        if (i < 0) i = 0;
+        if (i >= slides.length) i = slides.length - 1;
+        
+        // Update slide display
+        slides.forEach((s, idx) => {
+          s.style.display = (idx === i) ? 'block' : 'none';
+        });
+        
+        // Update active dot
+        const dots = Array.from(document.querySelectorAll('.dot'));
+        dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+        
+        // Update current slide index after potential changes
+        current = i;
+      }
+
+      // Initialize to first slide
+      show(0);
+
+      // Keyboard navigation (arrow keys, page up/down)
+      document.addEventListener('keydown', (e) => {
+        // Prevent default scrolling for arrow keys if on slides
+        if (['ArrowRight', 'ArrowLeft', 'PageDown', 'PageUp'].includes(e.key)) {
+          e.preventDefault();
+        }
+
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+          show(current + 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          show(current - 1);
+        } else if (e.key === 'Home') { // Go to first slide
+          show(0);
+        } else if (e.key === 'End') { // Go to last slide
+          show(slides.length - 1);
+        }
+      });
+
+      // Dots navigation
+      const dots = Array.from(document.querySelectorAll('.dot'));
+      dots.forEach((dot, idx) => {
+        dot.addEventListener('click', () => show(idx));
+      });
+
+      // Auto-advance (optional, for demo purposes)
+      // const autoAdvanceInterval = 15000; // 15 seconds
+      // if (autoAdvanceInterval && slides.length > 1 && !dots.some(d => d.classList.contains('active') && d.dataset.index === '1')) { // Only if first slide is not explicitly active or dots nav is not used
+      //   setInterval(() => {
+      //     show(current + 1);
+      //   }, autoAdvanceInterval);
+      // }
+    })();
+  </script>
+</body>
+</html>

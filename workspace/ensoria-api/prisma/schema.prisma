@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model People {
+  id        String   @id @default(cuid())
+  type      String   @default("client")
+  name      String
+  email     String?
+  phone     String?
+  company   String?
+  stage     String   @default("Contact")
+  notes     String?
+  tags      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects   Project[]
+  activities Activity[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  stage       String   @default("Contact")
+  subStatus   String?
+  value       Float?
+  peopleId    String
+  people      People   @relation(fields: [peopleId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  conversations Conversation[]
+  files         ProjectFile[]
+  requirements  Requirement[]
+  milestones    Milestone[]
+  collaborators Collaborator[]
+  plans         ProjectPlan[]
+  analytics     AnalyticsRecord[]
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  channel   String   @default("manual")
+  direction String   @default("inbound")
+  subject   String?
+  content   String
+  metadata  String?
+  sentiment Float?
+  createdAt DateTime @default(now())
+}
+
+model ProjectFile {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  url       String
+  type      String   @default("file")
+  mimeType  String?
+  size      Int?
+  createdAt DateTime @default(now())
+}
+
+model Requirement {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  category    String   @default("requirement")
+  status      String   @default("open")
+  priority    String   @default("medium")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Collaborator {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  email     String?
+  phone     String?
+  role      String?
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model ProjectPlan {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AnalyticsRecord {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sentimentScore  Float?
+  alignmentScore  Float?
+  healthScore     Float?
+  engagementScore Float?
+  rawData         String?
+  generatedAt     DateTime @default(now())
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  peopleId    String?
+  people      People?  @relation(fields: [peopleId], references: [id], onDelete: SetNull)
+  projectId   String?
+  type        String   @default("created")
+  description String
+  metadata    String?
+  createdAt   DateTime @default(now())
+}

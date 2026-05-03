@@ -1,0 +1,13 @@
+{
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "52281b38e3535fb7609266e783418acb325061651411f501"
+    }
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.4.27",
+    "lastTouchedAt": "2026-05-01T09:48:00.071Z"
+  }
+}

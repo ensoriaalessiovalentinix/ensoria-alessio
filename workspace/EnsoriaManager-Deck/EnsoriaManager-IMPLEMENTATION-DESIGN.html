@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ensoria Manager — Implementation Design Document</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --text: #e4e4ec;
+    --text2: #9898b0;
+    --accent: #a78bfa;
+    --accent2: #7c3aed;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --rose: #f87171;
+    --blue: #60a5fa;
+    --pink: #f472b6;
+    --border: #2a2a3a;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .slide {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 10vw;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .slide.hero {
+    background: linear-gradient(135deg, #0a0a15 0%, #120a2a 50%, #0a0a15 100%);
+  }
+  .slide.dark-alt { background: var(--surface); }
+  .slide-number {
+    position: absolute; top: 24px; right: 40px;
+    font-size: 13px; color: var(--text2); font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  h2 {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+    color: var(--text);
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    color: var(--accent);
+  }
+  .subtitle {
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--text2);
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+  .meta {
+    display: flex; gap: 32px; margin-top: 40px;
+  }
+  .meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .meta-label { font-size: 11px; text-transform: uppercase; color: var(--text2); letter-spacing: 0.1em; }
+  .meta-value { font-size: 16px; font-weight: 600; color: var(--text); }
+
+  .grid { display: grid; gap: 20px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .grid-5 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+  .card.accent-left { border-left: 3px solid var(--accent); }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+  .card p { font-size: 14px; color: var(--text2); line-height: 1.5; }
+
+  .badge {
+    display: inline-block; padding: 4px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-green { background: rgba(52,211,153,0.12); color: var(--green); }
+  .badge-amber { background: rgba(251,191,36,0.12); color: var(--amber); }
+  .badge-rose { background: rgba(248,113,113,0.12); color: var(--rose); }
+  .badge-blue { background: rgba(96,165,250,0.12); color: var(--blue); }
+  .badge-purple { background: rgba(167,139,250,0.12); color: var(--accent); }
+  .badge-pink { background: rgba(244,114,182,0.12); color: var(--pink); }
+
+  .pipeline {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;
+  }
+  .pipeline-step {
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    background: var(--surface2); border: 1px solid var(--border);
+  }
+  .pipeline-step.active { background: rgba(167,139,250,0.12); border-color: var(--accent); color: var(--accent); }
+
+  .stage-flow {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin: 24px 0; font-size: 14px; font-weight: 500;
+  }
+  .stage-item {
+    padding: 8px 16px; border-radius: var(--radius-sm);
+    background: var(--surface); border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .stage-arrow { color: var(--text2); font-size: 18px; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 24px 0; font-size: 14px;
+  }
+  th {
+    text-align: left; padding: 12px 16px;
+    border-bottom: 2px solid var(--border); color: var(--text2);
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:hover td { background: rgba(167,139,250,0.03); }
+
+  code {
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    color: var(--text2);
+    margin: 16px 0;
+  }
+  pre .kw { color: #c084fc; }
+  pre .str { color: #34d399; }
+  pre .cmt { color: #6b7280; font-style: italic; }
+
+  .toc {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .toc li {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .toc-num {
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    min-width: 28px;
+  }
+  .toc-title { font-weight: 600; color: var(--text); }
+  .toc-desc { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+  .score-bar {
+    height: 8px; border-radius: 4px; margin: 8px 0;
+    background: var(--surface);
+  }
+  .score-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.5s;
+  }
+
+  .timeline { margin: 24px 0; }
+  .timeline-item {
+    display: flex; gap: 20px; padding: 16px 0;
+    border-left: 2px solid var(--border);
+    padding-left: 24px; position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute; left: -6px; top: 20px;
+    width: 10px; height: 10px;
+    background: var(--accent); border-radius: 50%;
+  }
+  .timeline-item h4 { font-size: 15px; color: var(--text); }
+
+  .nav-dots {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .nav-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border); cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-dot:hover, .nav-dot.active { background: var(--accent); }
+
+  .divider {
+    border: none; border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  @media print {
+    .slide { min-height: auto; page-break-after: always; padding: 40px 5vw; }
+    .nav-dots { display: none; }
+    body { background: white; color: #111; }
+    .card, pre, table, .slide { border-color: #ddd; }
+    .card { background: #f9f9f9; }
+    pre { background: #f5f5f5; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- SLIDE 0: HERO -->
+<section class="slide hero" id="s0">
+  <div class="slide-number">01 / 16</div>
+  <h1>Ensoria Manager</h1>
+  <p class="subtitle">Implementation Design Document — CRM per tracciamento business clienti, contatti e opportunities con analytics layer e cross-channel conversations</p>
+  <div class="meta">
+    <div class="meta-item"><span class="meta-label">Version</span><span class="meta-value">1.0 — MVP Design</span></div>
+    <div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">2 Maggio 2026</span></div>
+    <div class="meta-item"><span class="meta-label">Author</span><span class="meta-value">Ensoria (AI Agent)</span></div>
+    <div class="meta-item"><span class="meta-label">Owner</span><span class="meta-value">Alessio Valentini</span></div>
+  </div>
+</section>
+
+<!-- SLIDE 1: TABLE OF CONTENTS -->
+<section class="slide" id="s1">
+  <div class="slide-number">02 / 16</div>
+  <h2>Table of Contents</h2>
+  <ul class="toc">
+    <li><span class="toc-num">01</span><span><span class="toc-title">Schema Dati</span><span class="toc-desc">People, Clienti, Progetti con stadi e relazioni</span></span></li>
+    <li><span class="toc-num">02</span><span><span class="toc-title">Spazio Progetto</span><span class="toc-desc">Conversazioni cross-channel, files, requirements, roadmap, analytics</span></span></li>
+    <li><span class="toc-num">03</span><span><span class="toc-title">Auth & Accesso</span><span class="toc-desc">Admin, Employees/Partners, Clienti — ruoli e permessi</span></span></li>
+    <li><span class="toc-num">04</span><span><span class="toc-title">Market Analysis</span><span class="toc-desc">5 app simili analizzate: Twenty CRM, Chatwoot, Atomic CRM, Frappe, MCP Scoring</span></span></li>
+    <li><span class="toc-num">05</span><span><span class="toc-title">UI/UX Design</span><span class="toc-desc">Dashboard, Kanban pipeline, Spazio Progetto, Mobile layout</span></span></li>
+    <li><span class="toc-num">06</span><span><span class="toc-title">Engineering Solution</span><span class="toc-desc">Tech stack, backend/frontend architecture, database schema</span></span></li>
+    <li><span class="toc-num">07</span><span><span class="toc-title">Feature Roadmap</span><span class="toc-desc">MVP vs Post-MVP features prioritizzate</span></span></li>
+    <li><span class="toc-num">08</span><span class="toc-desc">Scoring Model</span><span class="toc-desc">Analytics layer: sentiment, alignment, health scoring formula</span></span></li>
+  </ul>
+</section>
+
+<!-- SLIDE 2: DATA SCHEMA -->
+<section class="slide dark-alt" id="s2">
+  <div class="slide-number">03 / 16</div>
+  <h2>01 — Schema Dati</h2>
+  
+  <div class="grid grid-2">
+    <div class="card accent-left">
+      <div class="card-icon">👤</div>
+      <h4>People <span class="badge badge-purple">BASE</span></h4>
+      <p>Oggetto base con attributo <code>type</code> multi-tipo:</p>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;">
+        <span class="badge badge-purple">staff</span>
+        <span class="badge badge-blue">partner</span>
+        <span class="badge badge-green">freelancer</span>
+        <span class="badge badge-amber">azienda</span>
+        <span class="badge badge-pink">investor</span>
+      </div>
+      <p style="margin-top:8px;"><strong>Stadi People:</strong></p>
+      <div class="stage-flow" style="margin:8px 0;">
+        <span class="stage-item">Contact</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Opportunity</span><span class="stage-arrow">→</span>
+        <span class="stage-item" style="border-color:var(--green);color:var(--green);">Client</span><span class="stage-arrow">→</span>
+        <span class="stage-item" style="border-color:var(--accent);color:var(--accent);">Recurring Client</span>
+      </div>
+      <p style="font-size:13px;color:var(--text2);">Client = 1+ acquisto | Recurring = 2+ acquisti</p>
+    </div>
+
+    <div class="card accent-left">
+      <div class="card-icon">📊</div>
+      <h4>Progetti (Opportunities)</h4>
+      <p>Legati a <strong>Clienti</strong> (people con stadio Client o Recurring Client)</p>
+      <p style="margin-top:8px;"><strong>Stadi Progetto:</strong></p>
+      <div class="stage-flow" style="margin:8px 0;">
+        <span class="stage-item">Contact</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Opportunity</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Proposal</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Implementation</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Onboarding</span><span class="stage-arrow">→</span>
+        <span class="stage-item">Live</span><span class="stage-arrow">→</span>
+        <span class="stage-item" style="border-color:var(--green);color:var(--green);">Validated ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">Relazioni</h3>
+  <div class="grid grid-3">
+    <div class="card"><h4>👤→🏢</h4><p>People può diventare Cliente quando un progetto raggiunge "Implementation" con successo</p></div>
+    <div class="card"><h4>🏢→📊</h4><p>Ogni Cliente può avere N Progetti attivi simultaneamente</p></div>
+    <div class="card"><h4>📊→💬</h4><p>Ogni Progetto ha uno spazio dedicato con conversazioni, files, analytics</p></div>
+  </div>
+</section>
+
+<!-- SLIDE 3: PROJECT SPACE -->
+<section class="slide" id="s3">
+  <div class="slide-number">04 / 16</div>
+  <h2>02 — Spazio Progetto</h2>
+  <p class="subtitle">Il cuore dell'app: ogni progetto ha uno spazio dedicato con 7 aree</p>
+
+  <div class="grid grid-3" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-icon">💬</div>
+      <h4>Conversazioni Cross-Channel</h4>
+      <p>Feed cronologico unificato. Origine: webchat, WhatsApp, email, social, Gmail. Ogni messaggio registrato con canale, direzione, metadata.</p>
+      <p style="margin-top:8px;"><span class="badge badge-blue">Gmail L/S</span> <span class="badge badge-green">WhatsApp</span> <span class="badge badge-purple">Email</span></p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📎</div>
+      <h4>Files & Links</h4>
+      <p>Allegati, documenti, link di riferimento. File upload locale → cloud storage in produzione. URL tracking.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📋</div>
+      <h4>Requirements / Needs / Goals</h4>
+      <p>Bisogni, obiettivi, requisiti del cliente documentati e categorizzati. Tracciati con stato (open/in-progress/met).</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <h4>Roadmap & Milestones</h4>
+      <p>Milestone con date, descrizione, stato. Timeline visuale. Scadenze e dipendenze tra milestone.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">👥</div>
+      <h4>Collaboratori</h4>
+      <p>Chi lavora al progetto: interni + esterni. Ruoli, contatti, note. Collegamento a People DB.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📐</div>
+      <h4>Project Plans</h4>
+      <p>Piani operativi, documenti di progetto, strategy docs. Versionati e tracciati.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: ANALYTICS + GMAIL -->
+<section class="slide dark-alt" id="s4">
+  <div class="slide-number">05 / 16</div>
+  <div class="grid grid-2">
+    <div>
+      <h2>Analytics Layer</h2>
+      <p class="subtitle">Dai dati raccolti si producono score numerici e trend</p>
+      <div class="card" style="margin-top:16px;">
+        <h4>📈 Sentiment Score</h4>
+        <p>Analisi del sentiment dalle conversazioni cross-channel. NLP-powered. Range: -1 a 1 → normalizzato 0-100</p>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h4>🎯 Alignment to Vision Score</h4>
+        <p>Quanto il progetto è allineato alla visione del business. Basato su requirements/goals analysis</p>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h4>📉 Health Score</h4>
+        <p>Trend, rischio, stato di salute generale. Composito da tutte le metriche</p>
+      </div>
+      <p style="margin-top:16px;"><span class="badge badge-purple">Estendibile</span> — nuovi score possono essere aggiunti via plugin/moduli</p>
+    </div>
+    <div>
+      <h2>Gmail Integration</h2>
+      <p class="subtitle">Google Workspace già configurato</p>
+      <div class="card" style="margin-top:16px;">
+        <table>
+          <tr><td style="border:none;padding:8px 0;"><strong>Project</strong></td><td style="border:none;padding:8px 0;"><code>sendmessagesbot</code></td></tr>
+          <tr><td style="border:none;padding:8px 0;"><strong>Lettura</strong></td><td style="border:none;padding:8px 0;">✅ Gmail read-only scope</td></tr>
+          <tr><td style="border:none;padding:8px 0;"><strong>Scrittura</strong></td><td style="border:none;padding:8px 0;">✅ Gmail send scope</td></tr>
+          <tr><td style="border:none;padding:8px 0;"><strong>Scopes</strong></td><td style="border:none;padding:8px 0;"><code>gmail.modify</code> già configurato</td></tr>
+          <tr><td style="border:none;padding:8px 0;"><strong>Token</strong></td><td style="border:none;padding:8px 0;">Salvato in workspace</td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h4>Auth & Accesso</h4>
+        <table>
+          <tr><th>Ruolo</th><th>Accesso</th></tr>
+          <tr><td><strong>Admin</strong></td><td>Pieno — tutti i dati e configurazione</td></tr>
+          <tr><td><strong>Employees / Partners</strong></td><td>Dati in base al livello di partnership</td></tr>
+          <tr><td><strong>Clienti</strong></td><td>Gratuito — solo dati propri esposti, interazione online</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: INFRASTRUCTURE -->
+<section class="slide" id="s5">
+  <div class="slide-number">06 / 16</div>
+  <h2>Infrastructure</h2>
+  <div class="grid grid-2">
+    <div>
+      <div class="card accent-left" style="margin-bottom:16px;">
+        <h4>🏠 MVP — Locale</h4>
+        <p>MacBook AleX, SQLite (better-sqlite3), Docker opzionale, nessun deploy esterno</p>
+      </div>
+      <div class="card accent-left">
+        <h4>☁️ Produzione — Cloud Privato</h4>
+        <p>PostgreSQL, Docker, cloud VPS privata</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>🏗️ Pattern Architetturale</h4>
+        <p>Repository/data-layer astratto per isolare il DB</p>
+        <ul style="list-style:disc;margin-left:20px;margin-top:8px;color:var(--text2);font-size:14px;">
+          <li>Configurazione via env (DATABASE_URL)</li>
+          <li>Prisma come ORM — astrae SQLite vs PostgreSQL</li>
+          <li>Migrazioni versionate</li>
+          <li>Disconnessione/riconnessione senza impatto sul codice</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: MARKET ANALYSIS -->
+<section class="slide dark-alt" id="s6">
+  <div class="slide-number">07 / 16</div>
+  <h2>03 — Market Analysis</h2>
+  <p class="subtitle">5 app simili analizzate — cosa copiare, cosa evitare, cosa migliorare</p>
+  
+  <div class="grid grid-2">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:32px;">🔷</span>
+        <div><h4>Twenty CRM</h4><span class="badge badge-purple">40.5K ⭐</span></div>
+      </div>
+      <p><strong>Stack:</strong> React + NestJS + PostgreSQL + GraphQL</p>
+      <p><strong>Da copiare:</strong> Custom objects/fields GUI, Email/Calendar sync, workflow builder, roles & permissions</p>
+      <p><strong>Mancanze:</strong> No AI features, no charts nativi, no multi-tenancy</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:32px;">💬</span>
+        <div><h4>Chatwoot</h4><span class="badge badge-green">25K ⭐</span></div>
+      </div>
+      <p><strong>Stack:</strong> Ruby on Rails + Vue.js + PostgreSQL</p>
+      <p><strong>Da copiare:</strong> Inbox unificato cross-channel, agent assignment, automation rules, CSAT surveys</p>
+      <p><strong>Perfetto per:</strong> Il nostro modulo conversazioni cross-channel</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:32px;">⚛️</span>
+        <div><h4>Atomic CRM</h4><span class="badge badge-blue">MIT</span></div>
+      </div>
+      <p><strong>Stack:</strong> React + shadcn/ui + Supabase + PostgreSQL</p>
+      <p><strong>Da copiare:</strong> Solo 15K LOC, SSO/SAML, Kanban pipeline, mobile UI eccellente, MCP Server per AI</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <span style="font-size:32px;">🐍</span>
+        <div><h4>Frappe CRM</h4><span class="badge badge-amber">Open Source</span></div>
+      </div>
+      <p><strong>Stack:</strong> Python + Vue.js + MariaDB</p>
+      <p><strong>Da copiare:</strong> WhatsApp integration nativa</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h4>🔬 Customer Health Scoring (MCP Pattern)</h4>
+    <p><strong>Architettura:</strong> Multi-agent (data integration → analysis → recommendation)</p>
+    <p><strong>Scoring:</strong> Usage (40%) + Relationship (30%) + Support (30%) → 0-100 composite</p>
+    <p><strong>Soglie:</strong> <span class="badge badge-green">Healthy 80-100</span> <span class="badge badge-amber">At Risk 60-79</span> <span class="badge badge-rose">Critical 0-59</span></p>
+    <p><strong>Da copiare:</strong> Pattern per il nostro Analytics Layer</p>
+  </div>
+</section>
+
+<!-- SLIDE 7: UI/UX DESIGN -->
+<section class="slide" id="s7">
+  <div class="slide-number">08 / 16</div>
+  <h2>04 — UI/UX Design</h2>
+  
+  <div class="grid grid-2">
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <h4>🏠 Dashboard Principale</h4>
+        <ul style="font-size:14px;color:var(--text2);list-style:disc;margin-left:20px;">
+          <li>Pipeline Kanban (drag & drop) con stage columns</li>
+          <li>Metric cards: pipeline value, win rate, avg deal size, cycle time</li>
+          <li>Activity feed cronologico</li>
+          <li>Team leaderboard</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>🗂️ Layout Structure</h4>
+        <ul style="font-size:14px;color:var(--text2);list-style:disc;margin-left:20px;">
+          <li>Sidebar navigazione sinistra (collapse/expand)</li>
+          <li>Header: global search + user menu</li>
+          <li>Main content: lista, dettaglio, o kanban</li>
+          <li>Dark/light mode</li>
+          <li>Cmd+K command palette</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>📊 Spazio Progetto — Tabs</h4>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin:12px 0;">
+          <span class="badge badge-purple">Conversations</span>
+          <span class="badge badge-blue">Files</span>
+          <span class="badge badge-green">Requirements</span>
+          <span class="badge badge-amber">Roadmap</span>
+          <span class="badge badge-pink">Collaborators</span>
+          <span class="badge badge-purple">Plans</span>
+          <span class="badge badge-green">Analytics</span>
+        </div>
+        <ul style="font-size:14px;color:var(--text2);list-style:disc;margin-left:20px;margin-top:8px;">
+          <li>Left panel: project info + quick stats + stage indicator</li>
+          <li>Main panel: active tab content</li>
+          <li>Right panel (optional): activity feed, notes</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h4>📱 Mobile</h4>
+        <ul style="font-size:14px;color:var(--text2);list-style:disc;margin-left:20px;">
+          <li>Bottom navigation bar</li>
+          <li>List → detail drill-down pattern</li>
+          <li>PWA-ready per installazione</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: TECH STACK -->
+<section class="slide dark-alt" id="s8">
+  <div class="slide-number">09 / 16</div>
+  <h2>05 — Tech Stack</h2>
+
+  <table>
+    <tr><th>Layer</th><th>MVP</th><th>Produzione</th></tr>
+    <tr><td><strong>Backend</strong></td><td>TypeScript + Express/Fastify</td><td>NestJS (come Twenty CRM)</td></tr>
+    <tr><td><strong>Frontend</strong></td><td>React + shadcn/ui + TanStack Query</td><td>React + Next.js</td></tr>
+    <tr><td><strong>Database</strong></td><td>SQLite (better-sqlite3)</td><td>PostgreSQL</td></tr>
+    <tr><td><strong>ORM</strong></td><td>Prisma</td><td>Prisma</td></tr>
+    <tr><td><strong>Auth</strong></td><td>JWT + bcrypt</td><td>JWT + OAuth2 + SSO</td></tr>
+    <tr><td><strong>Omnichannel</strong></td><td>Pattern Chatwoot</td><td>Integrazione nativa</td></tr>
+    <tr><td><strong>AI/Analytics</strong></td><td>OpenAI API + scripts</td><td>MCP server dedicato</td></tr>
+    <tr><td><strong>Gmail</strong></td><td>Google API (sendmessagesbot)</td><td>Webhook + push notifications</td></tr>
+    <tr><td><strong>File Storage</strong></td><td>Filesystem locale</td><td>S3-compatible</td></tr>
+    <tr><td><strong>Deploy</strong></td><td>Local (Docker opt)</td><td>Docker + cloud VPS</td></tr>
+  </table>
+
+  <p style="margin-top:24px;color:var(--text2);font-size:14px;">
+    <span class="badge badge-purple">Scelta chiave</span> 
+    <strong>Prisma</strong> come ORM — astrae SQLite ↔ PostgreSQL, migrazioni versionate, type-safe.
+    Stesso schema per MVP e produzione, cambia solo <code>DATABASE_URL</code>.
+  </p>
+</section>
+
+<!-- SLIDE 9: BACKEND ARCHITECTURE -->
+<section class="slide" id="s9">
+  <div class="slide-number">10 / 16</div>
+  <h2>Backend Architecture</h2>
+  
+  <div class="grid grid-2">
+    <div>
+<pre>
+ensoria-api/
+├── src/
+│   ├── modules/
+│   │   ├── people/        <span class="cmt"># CRUD + stage mgmt</span>
+│   │   ├── projects/      <span class="cmt"># CRUD + pipeline</span>
+│   │   ├── conversations/ <span class="cmt"># Unified inbox</span>
+│   │   ├── files/         <span class="cmt"># File upload/links</span>
+│   │   ├── requirements/  <span class="cmt"># Needs/goals</span>
+│   │   ├── roadmap/       <span class="cmt"># Milestones</span>
+│   │   ├── collaborators/ <span class="cmt"># Team mgmt</span>
+│   │   ├── plans/         <span class="cmt"># Project plans</span>
+│   │   ├── analytics/     <span class="cmt"># Scoring engine</span>
+│   │   ├── auth/          <span class="cmt"># JWT + roles</span>
+│   │   ├── gmail/         <span class="cmt"># Google API</span>
+│   │   └── webhooks/      <span class="cmt"># External integrations</span>
+│   ├── common/
+│   │   ├── database/      <span class="cmt"># Prisma service</span>
+│   │   ├── guards/        <span class="cmt"># Auth guards</span>
+│   │   └── decorators/    <span class="cmt"># Custom decorators</span>
+│   └── main.ts
+├── prisma/
+│   └── schema.prisma
+└── package.json
+</pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4>Modular Architecture</h4>
+        <p>Ogni modulo è indipendente con propri service, controller, DTOs</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--text2);">Facile da testare, estendere, rimuovere senza side effects</p>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4>API Design — REST</h4>
+        <p><code>GET /api/projects/:id</code> — dettaglio progetto</p>
+        <p><code>GET /api/projects/:id/conversations</code> — conversazioni</p>
+        <p><code>POST /api/projects/:id/stage</code> — cambia stage</p>
+        <p><code>GET /api/projects/:id/analytics</code> — score report</p>
+      </div>
+      <div class="card">
+        <h4>Middleware Stack</h4>
+        <p>Auth guard → Role guard → Validation → Controller → Service → Prisma → DB</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: FRONTEND ARCHITECTURE -->
+<section class="slide dark-alt" id="s10">
+  <div class="slide-number">11 / 16</div>
+  <h2>Frontend Architecture</h2>
+  
+  <div class="grid grid-2">
+    <div>
+<pre>
+ensoria-ui/
+├── src/
+│   ├── components/        
+│   │   ├── ui/            <span class="cmt"># shadcn/ui primitives</span>
+│   │   ├── layout/        <span class="cmt"># Sidebar, Header</span>
+│   │   ├── people/        <span class="cmt"># PeopleCard, PeopleList</span>
+│   │   ├── projects/      <span class="cmt"># Kanban, PipelineBoard</span>
+│   │   ├── conversations/ <span class="cmt"># ConversationFeed</span>
+│   │   ├── analytics/     <span class="cmt"># ScoreGauge, Charts</span>
+│   │   └── shared/        <span class="cmt"># StageBadge, StatusDot</span>
+│   ├── pages/
+│   │   ├── DashboardPage
+│   │   ├── PeoplePage
+│   │   ├── PeopleDetailPage
+│   │   ├── ProjectsPage
+│   │   ├── ProjectSpacePage <span class="cmt"># Tabs: convos/files/...</span>
+│   │   ├── AnalyticsPage
+│   │   ├── SettingsPage
+│   │   └── AuthPage
+│   ├── hooks/              <span class="cmt"># usePeople, useProject,...</span>
+│   ├── api/                <span class="cmt"># TanStack Query client</span>
+│   ├── stores/             <span class="cmt"># Zustand stores</span>
+│   └── App.tsx
+├── tailwind.config.ts
+└── package.json
+</pre>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4>Component Library</h4>
+        <p><strong>shadcn/ui</strong> — accessibile, copiable, personalizzabile</p>
+        <p style="margin-top:4px;font-size:13px;color:var(--text2);">Stesso stack di Atomic CRM e Apex Dashboard</p>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <h4>State & Data</h4>
+        <p><strong>TanStack Query</strong> — server state, caching, refetch</p>
+        <p><strong>Zustand</strong> — client state (auth, UI, filters)</p>
+        <p><strong>React Router</strong> — routing</p>
+      </div>
+      <div class="card">
+        <h4>Key UI Components</h4>
+        <ul style="font-size:13px;color:var(--text2);list-style:disc;margin-left:20px;">
+          <li><strong>KanbanBoard</strong> — drag & drop pipeline</li>
+          <li><strong>ProjectTabs</strong> — 7-tab navigation</li>
+          <li><strong>ConversationFeed</strong> — timeline cross-channel</li>
+          <li><strong>ScoreGauge</strong> — radial gauge per analytics</li>
+          <li><strong>StageBadge</strong> — indicatore stage colorato</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11: DATABASE SCHEMA -->
+<section class="slide" id="s11">
+  <div class="slide-number">12 / 16</div>
+  <h2>Database Schema (Prisma)</h2>
+  
+<pre>
+<span class="kw">model</span> <span class="str">People</span> {
+  id          <span class="str">String</span>   @id @default(cuid())
+  type        <span class="str">String</span>   <span class="cmt">// staff | partner | freelancer | company | investor</span>
+  name        <span class="str">String</span>
+  email       <span class="str">String</span>?
+  phone       <span class="str">String</span>?
+  company     <span class="str">String</span>?
+  stage       <span class="str">String</span>   <span class="cmt">// Contact | Opportunity | Client | Recurring Client</span>
+  tags        <span class="str">String</span>[]
+  createdAt   <span class="str">DateTime</span> @default(now())
+  updatedAt   <span class="str">DateTime</span> @updatedAt
+  
+  projects    <span class="str">Project</span>[]
+  contacts    <span class="str">Contact</span>[]
+  activities  <span class="str">Activity</span>[]
+}
+
+<span class="kw">model</span> <span class="str">Project</span> {
+  id            <span class="str">String</span>   @id @default(cuid())
+  name          <span class="str">String</span>
+  description   <span class="str">String</span>?
+  stage         <span class="str">String</span>   <span class="cmt">// Contact | Opportunity | Proposal | Implementation | Onboarding | Live | Validated</span>
+  peopleId      <span class="str">String</span>
+  people        <span class="str">People</span>   @relation(fields: [peopleId], references: [id])
+  
+  conversations <span class="str">Conversation</span>[]
+  files         <span class="str">ProjectFile</span>[]
+  requirements  <span class="str">Requirement</span>[]
+  milestones    <span class="str">Milestone</span>[]
+  collaborators <span class="str">Collaborator</span>[]
+  plans         <span class="str">ProjectPlan</span>[]
+  analytics     <span class="str">AnalyticsRecord</span>[]
+  
+  createdAt     <span class="str">DateTime</span> @default(now())
+  updatedAt     <span class="str">DateTime</span> @updatedAt
+}
+
+<span class="kw">model</span> <span class="str">Conversation</span> {
+  id          <span class="str">String</span>   @id @default(cuid())
+  projectId   <span class="str">String</span>
+  project     <span class="str">Project</span>  @relation(fields: [projectId], references: [id])
+  channel     <span class="str">String</span>   <span class="cmt">// webchat | whatsapp | email | social | gmail</span>
+  direction   <span class="str">String</span>   <span class="cmt">// inbound | outbound</span>
+  content     <span class="str">String</span>
+  metadata    <span class="str">Json</span>?
+  sentiment   <span class="str">Float</span>?   <span class="cmt">// -1 to 1</span>
+  createdAt   <span class="str">DateTime</span> @default(now())
+}
+
+<span class="kw">model</span> <span class="str">AnalyticsRecord</span> {
+  id              <span class="str">String</span>   @id @default(cuid())
+  projectId       <span class="str">String</span>
+  project         <span class="str">Project</span>  @relation(fields: [projectId], references: [id])
+  sentimentScore  <span class="str">Float</span>?
+  alignmentScore  <span class="str">Float</span>?
+  healthScore     <span class="str">Float</span>?
+  generatedAt     <span class="str">DateTime</span> @default(now())
+}
+</pre>
+</section>
+
+<!-- SLIDE 12: FEATURE ROADMAP -->
+<section class="slide dark-alt" id="s12">
+  <div class="slide-number">13 / 16</div>
+  <h2>06 — Feature Roadmap</h2>
+
+  <div class="grid grid-2">
+    <div>
+      <h3><span class="badge badge-green">MVP</span> Iterazione 1</h3>
+      <div class="card" style="margin-top:12px;">
+        <table>
+          <tr><td>✅</td><td>Auth: login/register admin</td></tr>
+          <tr><td>✅</td><td>People CRUD + stage management</td></tr>
+          <tr><td>✅</td><td>Projects CRUD + pipeline Kanban</td></tr>
+          <tr><td>✅</td><td>Project Space: tabs (Conversations, Files, Requirements, Roadmap, Collaborators, Plans)</td></tr>
+          <tr><td>✅</td><td>Conversations: manual insert + timeline feed</td></tr>
+          <tr><td>✅</td><td>Files & Links: upload + URL save</td></tr>
+          <tr><td>✅</td><td>Requirements/Goals CRUD</td></tr>
+          <tr><td>✅</td><td>Roadmap: milestones + timeline view</td></tr>
+          <tr><td>✅</td><td>Collaborators: add/remove to project</td></tr>
+          <tr><td>✅</td><td>Dashboard: pipeline + metric cards</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3><span class="badge badge-purple">Post-MVP</span> Features</h3>
+      <div class="card" style="margin-top:12px;">
+        <table>
+          <tr><td>🔮</td><td>Omnichannel inbox (Chatwoot-style)</td></tr>
+          <tr><td>🔮</td><td>Gmail sync: read + send + attachments</td></tr>
+          <tr><td>🔮</td><td>Client portal: clienti vedono dati propri</td></tr>
+          <tr><td>🔮</td><td>Analytics engine: AI sentiment + scoring</td></tr>
+          <tr><td>🔮</td><td>Employee/Partner roles + permissions</td></tr>
+          <tr><td>🔮</td><td>Webhook integrations (Zapier/n8n style)</td></tr>
+          <tr><td>🔮</td><td>PWA mobile app</td></tr>
+          <tr><td>🔮</td><td>AI assistant: azioni suggerite dai dati</td></tr>
+          <tr><td>🔮</td><td>Automation rules: stage → trigger → action</td></tr>
+          <tr><td>🔮</td><td>Export CSV, custom reports</td></tr>
+          <tr><td>🔮</td><td>Multi-tenancy per hosting cloud</td></tr>
+          <tr><td>🔮</td><td>Calendar sync (Google Calendar)</td></tr>
+          <tr><td>🔮</td><td>Billing integration (Stripe)</td></tr>
+          <tr><td>🔮</td><td>Knowledge base condivisa per progetto</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13: SCORING MODEL -->
+<section class="slide" id="s13">
+  <div class="slide-number">14 / 16</div>
+  <h2>07 — Scoring Model</h2>
+  
+  <div class="card accent-left" style="margin-bottom:24px;">
+    <h4>📐 Formula Composita</h4>
+    <p style="font-size:18px;font-family:monospace;color:var(--accent);margin:12px 0;">
+      Health Score = Sentiment(30%) + Alignment(25%) + Progress(20%) + Engagement(15%) + Volume(10%)
+    </p>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h4>📈 Sentiment Score (30%)</h4>
+      <p>Da analisi NLP conversazioni</p>
+      <div class="score-bar"><div class="score-fill" style="width:75%;background:var(--accent);"></div></div>
+      <table style="margin-top:8px;">
+        <tr><td>Positive > 65</td><td><span class="badge badge-green">Good</span></td></tr>
+        <tr><td>Neutral 35-65</td><td><span class="badge badge-amber">Watch</span></td></tr>
+        <tr><td>Negative < 35</td><td><span class="badge badge-rose">Action</span></td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--text2);margin-top:8px;">Conversazioni recenti pesano di più</p>
+    </div>
+    <div class="card">
+      <h4>🎯 Alignment Score (25%)</h4>
+      <p>Requirements/goals vs business vision</p>
+      <div class="score-bar"><div class="score-fill" style="width:60%;background:var(--blue);"></div></div>
+      <p style="font-size:13px;color:var(--text2);margin-top:8px;">Manual + AI-assisted scoring, trend tracking</p>
+    </div>
+    <div class="card">
+      <h4>📊 Progress Score (20%)</h4>
+      <p>Milestones completati vs timeline</p>
+      <div class="score-bar"><div class="score-fill" style="width:45%;background:var(--amber);"></div></div>
+      <p style="font-size:13px;color:var(--text2);margin-top:8px;">On-track / At-risk / Delayed</p>
+    </div>
+    <div class="card">
+      <h4>📊 Engagement + Volume (25%)</h4>
+      <p>Frequenza interazioni + volume comunicazione</p>
+      <div class="score-bar"><div class="score-fill" style="width:55%;background:var(--pink);"></div></div>
+      <p style="font-size:13px;color:var(--text2);margin-top:8px;">Engagement (15%) + Communication Volume (10%)</p>
+    </div>
+  </div>
+
+  <div class="grid grid-4" style="margin-top:24px;">
+    <div class="card" style="text-align:center;">
+      <p style="font-size:12px;color:var(--text2);">Soglie Standard</p>
+      <p><span class="badge badge-green">80-100 Healthy</span></p>
+      <p><span class="badge badge-amber">60-79 At Risk</span></p>
+      <p><span class="badge badge-rose">0-59 Critical</span></p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <p style="font-size:12px;color:var(--text2);">Generazione</p>
+      <p style="font-size:18px;font-weight:700;color:var(--accent);">On-demand</p>
+      <p style="font-size:13px;color:var(--text2);">o via cron job</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <p style="font-size:12px;color:var(--text2);">Trend</p>
+      <p style="font-size:18px;font-weight:700;color:var(--green);">↗ Improving</p>
+      <p style="font-size:13px;color:var(--text2);">storico scores</p>
+    </div>
+    <div class="card" style="text-align:center;">
+      <p style="font-size:12px;color:var(--text2);">Estendibilità</p>
+      <p style="font-size:18px;font-weight:700;color:var(--accent);">Plugin</p>
+      <p style="font-size:13px;color:var(--text2);">nuovi score via moduli</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: SUMMARY -->
+<section class="slide dark-alt" id="s14">
+  <div class="slide-number">15 / 16</div>
+  <h2>Implementation Summary</h2>
+
+  <div class="grid grid-3">
+    <div class="card">
+      <h4>📦 What We're Building</h4>
+      <p>CRM per tracciare People (staff, partner, freelancer, azienda, investor) che diventano Clienti, con Progetti aventi uno spazio dedicato a conversazioni cross-channel, files, requirements, roadmap, collaboratori e analytics.</p>
+    </div>
+    <div class="card">
+      <h4>🛠️ How We Build It</h4>
+      <p>TypeScript full-stack: React + shadcn/ui + Express/Fastify + Prisma + SQLite. Architettura modulare predisposta per cloud migration (PostgreSQL). Pattern ispirati a Twenty CRM, Chatwoot, Atomic CRM.</p>
+    </div>
+    <div class="card">
+      <h4>📈 What Makes It Unique</h4>
+      <p>Cross-channel conversation logging unificato, analytics layer con sentiment/alignment/health scoring, Gmail integration nativa, client portal gratuito, permission system multilivello.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;text-align:center;">
+    <h3 style="margin-bottom:8px;">Ready for Implementation</h3>
+    <p style="color:var(--text2);">Tutti i documenti salvati in <code>~/workspace/</code></p>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
+      <span class="badge badge-purple" style="font-size:14px;padding:8px 16px;">CRMSpec.md</span>
+      <span class="badge badge-blue" style="font-size:14px;padding:8px 16px;">EnsoriaManager-DISCOVERY.md</span>
+      <span class="badge badge-green" style="font-size:14px;padding:8px 16px;">EnsoriaManager-IMPLEMENTATION-DESIGN.html</span>
+      <span class="badge badge-amber" style="font-size:14px;padding:8px 16px;">TASKS.md</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 15: READY -->
+<section class="slide hero" id="s15" style="text-align:center;">
+  <div class="slide-number">16 / 16</div>
+  <h1>Ready to Code</h1>
+  <p class="subtitle" style="margin:0 auto;">
+    DeepSeek V4 Code attivato • Tutto il design è documentato • Pronto per l'implementazione MVP
+  </p>
+  <div style="margin-top:48px;display:flex;gap:16px;justify-content:center;">
+    <div class="card" style="min-width:180px;text-align:center;">
+      <p style="font-size:32px;margin-bottom:8px;">🧠</p>
+      <p style="font-weight:600;">Ensoria Manager</p>
+      <p style="font-size:13px;color:var(--text2);">CRM × Analytics</p>
+    </div>
+    <div class="card" style="min-width:180px;text-align:center;">
+      <p style="font-size:32px;margin-bottom:8px;">👤</p>
+      <p style="font-weight:600;">People → Clienti</p>
+      <p style="font-size:13px;color:var(--text2);">Multi-type + stages</p>
+    </div>
+    <div class="card" style="min-width:180px;text-align:center;">
+      <p style="font-size:32px;margin-bottom:8px;">📊</p>
+      <p style="font-weight:600;">7 Stage Pipeline</p>
+      <p style="font-size:13px;color:var(--text2);">Contact → Validated</p>
+    </div>
+    <div class="card" style="min-width:180px;text-align:center;">
+      <p style="font-size:32px;margin-bottom:8px;">💬</p>
+      <p style="font-weight:600;">Cross-Channel</p>
+      <p style="font-size:13px;color:var(--text2);">+ Gmail L/S</p>
+    </div>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.slide').forEach((s,i) => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.title = s.querySelector('h2')?.textContent || 'Hero';
+  dot.onclick = () => s.scrollIntoView({behavior:'smooth'});
+  document.getElementById('navDots').appendChild(dot);
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.nav-dot').forEach((d,i) => {
+        d.classList.toggle('active', i === Array.from(document.querySelectorAll('.slide')).indexOf(e.target));
+      });
+    }
+  });
+}, {threshold:0.5});
+document.querySelectorAll('.slide').forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

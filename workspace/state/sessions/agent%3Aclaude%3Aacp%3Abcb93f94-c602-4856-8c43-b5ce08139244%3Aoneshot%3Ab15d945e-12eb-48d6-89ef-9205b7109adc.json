@@ -1,0 +1,189 @@
+{
+  "schema": "acpx.session.v1",
+  "acpx_record_id": "agent:claude:acp:bcb93f94-c602-4856-8c43-b5ce08139244:oneshot:b15d945e-12eb-48d6-89ef-9205b7109adc",
+  "acp_session_id": "f56453fd-e535-486f-ace7-83674f2289c7",
+  "agent_command": "npx -y @agentclientprotocol/claude-agent-acp@^0.31.0",
+  "cwd": "/Users/alessio/.openclaw/workspace/claude",
+  "name": "agent:claude:acp:bcb93f94-c602-4856-8c43-b5ce08139244",
+  "created_at": "2026-04-28T15:15:55.645Z",
+  "last_used_at": "2026-04-28T15:16:00.106Z",
+  "last_seq": 0,
+  "last_request_id": "2571f3cc-a429-4f96-9f0c-6f07b9d66eac",
+  "event_log": {
+    "active_path": "/Users/alessio/.acpx/sessions/agent%3Aclaude%3Aacp%3Abcb93f94-c602-4856-8c43-b5ce08139244%3Aoneshot%3Ab15d945e-12eb-48d6-89ef-9205b7109adc.stream.ndjson",
+    "segment_count": 5,
+    "max_segment_bytes": 67108864,
+    "max_segments": 5,
+    "last_write_error": null
+  },
+  "closed": true,
+  "closed_at": "2026-04-28T15:16:00.414Z",
+  "pid": 63363,
+  "agent_started_at": "2026-04-28T15:15:58.236Z",
+  "last_prompt_at": "2026-04-28T15:16:00.074Z",
+  "protocol_version": 1,
+  "agent_capabilities": {
+    "_meta": {
+      "claudeCode": {
+        "promptQueueing": true
+      }
+    },
+    "promptCapabilities": {
+      "image": true,
+      "embeddedContext": true
+    },
+    "mcpCapabilities": {
+      "http": true,
+      "sse": true
+    },
+    "loadSession": true,
+    "sessionCapabilities": {
+      "fork": {},
+      "list": {},
+      "resume": {},
+      "close": {}
+    }
+  },
+  "title": null,
+  "messages": [
+    {
+      "User": {
+        "id": "59ce25d7-9fff-4396-939a-9e335099996f",
+        "content": [
+          {
+            "Text": "[Tue 2026-04-28 17:15 GMT+2] List available ACP harnesses and their configurations, including supported models and readiness status."
+          }
+        ]
+      }
+    }
+  ],
+  "updated_at": "2026-04-28T15:16:00.078Z",
+  "cumulative_token_usage": {},
+  "request_token_usage": {},
+  "acpx": {
+    "current_model_id": "default",
+    "available_models": [
+      "default",
+      "sonnet[1m]",
+      "opus[1m]",
+      "haiku"
+    ],
+    "available_commands": [
+      "update-config",
+      "debug",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "loop",
+      "claude-api",
+      "clear",
+      "compact",
+      "context",
+      "heapdump",
+      "init",
+      "review",
+      "security-review",
+      "usage",
+      "insights",
+      "team-onboarding"
+    ],
+    "config_options": [
+      {
+        "id": "mode",
+        "name": "Mode",
+        "description": "Session permission mode",
+        "category": "mode",
+        "type": "select",
+        "currentValue": "default",
+        "options": [
+          {
+            "value": "auto",
+            "name": "Auto",
+            "description": "Use a model classifier to approve/deny permission prompts"
+          },
+          {
+            "value": "default",
+            "name": "Default",
+            "description": "Standard behavior, prompts for dangerous operations"
+          },
+          {
+            "value": "acceptEdits",
+            "name": "Accept Edits",
+            "description": "Auto-accept file edit operations"
+          },
+          {
+            "value": "plan",
+            "name": "Plan Mode",
+            "description": "Planning mode, no actual tool execution"
+          },
+          {
+            "value": "dontAsk",
+            "name": "Don't Ask",
+            "description": "Don't prompt for permissions, deny if not pre-approved"
+          },
+          {
+            "value": "bypassPermissions",
+            "name": "Bypass Permissions",
+            "description": "Bypass all permission checks"
+          }
+        ]
+      },
+      {
+        "id": "model",
+        "name": "Model",
+        "description": "AI model to use",
+        "category": "model",
+        "type": "select",
+        "currentValue": "default",
+        "options": [
+          {
+            "value": "default",
+            "name": "Default (recommended)",
+            "description": "Use the default model (currently Sonnet 4.6) · $3/$15 per Mtok"
+          },
+          {
+            "value": "sonnet[1m]",
+            "name": "Sonnet (1M context)",
+            "description": "Sonnet 4.6 for long sessions · $3/$15 per Mtok"
+          },
+          {
+            "value": "opus[1m]",
+            "name": "Opus 4.7 (1M context)",
+            "description": "Opus 4.7 with 1M context · Most capable for complex work · $5/$25 per Mtok"
+          },
+          {
+            "value": "haiku",
+            "name": "Haiku",
+            "description": "Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok"
+          }
+        ]
+      },
+      {
+        "id": "effort",
+        "name": "Effort",
+        "description": "Available effort levels for this model",
+        "category": "thought_level",
+        "type": "select",
+        "currentValue": "high",
+        "options": [
+          {
+            "value": "low",
+            "name": "Low"
+          },
+          {
+            "value": "medium",
+            "name": "Medium"
+          },
+          {
+            "value": "high",
+            "name": "High"
+          },
+          {
+            "value": "max",
+            "name": "Max"
+          }
+        ]
+      }
+    ]
+  }
+}

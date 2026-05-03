@@ -1,0 +1,60 @@
+# Environment (può contenere secrets)
+.env
+.env.*
+
+# Workspace
+workspace/node_modules/
+workspace/dist/
+workspace/*.db
+workspace/*.db-*
+workspace/generated/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OpenClaw runtime — non committare
+logs/
+browser/
+canvas/
+completions/
+cron/
+delivery-queue/
+devices/
+exec-approvals.json
+media/
+plugin-runtime-deps/
+service-env/
+subagents/
+tasks/
+tmp/
+update-check.json
+acpx/
+agents/
+flows/
+identity/
+openclaw.json
+openclaw.json.bak
+openclaw.json.bak.*
+openclaw.json.*.bak
+openclaw.json.clobbered.*
+openclaw.json.last-good
+openclaw.yaml
+openclaw.yaml.bak
+openclaw.yaml.bak-*
+package-lock.json
+telegram/
+
+# SQLite / memory (file generati)
+memory/*.sqlite
+memory/*.sqlite-*
+
+# Tokens
+*_token.json
+*_credentials.json
+.google/
