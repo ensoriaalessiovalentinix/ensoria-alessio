@@ -37,6 +37,7 @@ generated/
 # Tokens & credentials
 *_token.json
 *_credentials.json
+agents/main/agent/auth-profiles.json
 
 # Media / temp
 media/*
@@ -62,7 +63,6 @@ devices/
 subagents/
 tasks/
 telegram/
-acpx/
 agents/
 flows/
 identity/

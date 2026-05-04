@@ -1,25 +1,28 @@
 {
   "agent:main:telegram:direct:5046974518": {
-    "sessionId": "626dbdaf-f3e0-4775-a4d6-608930e8956d",
-    "updatedAt": 1777880753327,
-    "sessionStartedAt": 1777877557980,
-    "lastInteractionAt": 1777880475854,
+    "sessionId": "73884b9b-e505-4f47-9b85-4e4ede19844e",
+    "updatedAt": 1777882664990,
+    "sessionStartedAt": 1777882434552,
+    "lastInteractionAt": 1777882627189,
     "systemSent": true,
     "abortedLastRun": false,
-    "authProfileOverride": "deepseek:default",
-    "authProfileOverrideSource": "auto",
-    "authProfileOverrideCompactionCount": 0,
     "chatType": "direct",
     "deliveryContext": {
-      "channel": "telegram"
+      "channel": "telegram",
+      "to": "telegram:5046974518",
+      "accountId": "default"
     },
     "lastChannel": "telegram",
     "origin": {
-      "provider": "webchat",
-      "surface": "webchat",
-      "chatType": "direct"
+      "label": "Alessio Valentini (@alessiovalentinix) id:5046974518",
+      "provider": "telegram",
+      "surface": "telegram",
+      "chatType": "direct",
+      "from": "telegram:5046974518",
+      "to": "telegram:5046974518",
+      "accountId": "default"
     },
-    "sessionFile": "/Users/alessio/.openclaw/agents/main/sessions/626dbdaf-f3e0-4775-a4d6-608930e8956d.jsonl",
+    "sessionFile": "/Users/alessio/.openclaw/agents/main/sessions/73884b9b-e505-4f47-9b85-4e4ede19844e.jsonl",
     "compactionCount": 0,
     "skillsSnapshot": {
       "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>acp-router</name>\n    <description>Route plain-language requests for Pi, Claude Code, Cursor, Copilot, OpenClaw ACP, OpenCode, Gemini CLI, Qwen, Kiro, Kimi, iFlow, Factory Droid, Kilocode, or explicit ACP harness work into either OpenClaw ACP runtime sessions or direct acpx-driven sessions (&quot;telephone game&quot; flow). For coding-agent thread requests, read this skill first, then use only `sessions_spawn` for thread creation. Codex chat binding defaults to the native Codex app-server plugin unless ACP is explicit or background spawn needs ACP.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/dist/extensions/acpx/skills/acp-router/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>browser-automation</name>\n    <description>Use when controlling web pages with the OpenClaw browser tool, especially multi-step flows, login checks, tab management, or recovery from stale refs/timeouts.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/dist/extensions/browser/skills/browser-automation/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>gemini</name>\n    <description>Gemini CLI for one-shot Q&amp;A, summaries, and generation.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/gemini/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>gh-issues</name>\n    <description>Fetch GitHub issues, delegate fixes to subagents, open PRs, watch reviews, or run /gh-issues workflows.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/gh-issues/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>github</name>\n    <description>Use gh for GitHub issues, PR status, CI/logs, comments, reviews, releases, and API queries.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/github/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Audit and harden hosts running OpenClaw for SSH, firewall, updates, exposure, cron checks, and risk posture.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/healthcheck/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>nano-pdf</name>\n    <description>Edit PDFs with natural-language instructions using the nano-pdf CLI.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/nano-pdf/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw Android, iOS, or macOS node pairing, QR/setup code, route, auth, and connection failures.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/node-connect/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>notion</name>\n    <description>Notion API for creating and managing pages, databases, and blocks.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/notion/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>openai-whisper-api</name>\n    <description>Transcribe audio via OpenAI Audio Transcriptions API (Whisper).</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/openai-whisper-api/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Create, edit, improve, tidy, review, audit, or restructure AgentSkills and SKILL.md files.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/skill-creator/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>sonoscli</name>\n    <description>Control Sonos speakers (discover/status/play/volume/group).</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/sonoscli/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow</name>\n    <description>Coordinate multi-step detached tasks as one durable TaskFlow job with owner context, state, waits, and child tasks.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/taskflow/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>taskflow-inbox-triage</name>\n    <description>Example TaskFlow pattern for inbox triage, intent routing, waiting on replies, and later summaries.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/taskflow-inbox-triage/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>wacli</name>\n    <description>Send third-party WhatsApp messages or sync/search WhatsApp history via wacli, not normal active chats.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/wacli/SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather, rain, temperature, and forecasts for locations or travel planning.</description>\n    <location>/opt/homebrew/lib/node_modules/openclaw/skills/weather/SKILL.md</location>\n  </skill>\n</available_skills>",
@@ -334,14 +337,13 @@
       "version": 0
     },
     "status": "done",
-    "startedAt": 1777880742656,
+    "startedAt": 1777882658808,
     "modelProvider": "deepseek",
     "model": "deepseek-v4-flash",
-    "contextTokens": 1000000,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1777880736315,
-      "sessionId": "626dbdaf-f3e0-4775-a4d6-608930e8956d",
+      "generatedAt": 1777882651927,
+      "sessionId": "73884b9b-e505-4f47-9b85-4e4ede19844e",
       "sessionKey": "agent:main:telegram:direct:5046974518",
       "provider": "deepseek",
       "model": "deepseek-v4-flash",
@@ -360,9 +362,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 35596,
+        "chars": 37308,
         "projectContextChars": 16675,
-        "nonProjectContextChars": 18921
+        "nonProjectContextChars": 20633
       },
       "injectedWorkspaceFiles": [
         {
@@ -501,7 +503,7 @@
       },
       "tools": {
         "listChars": 0,
-        "schemaChars": 29249,
+        "schemaChars": 39239,
         "entries": [
           {
             "name": "read",
@@ -523,13 +525,13 @@
           },
           {
             "name": "exec",
-            "summaryChars": 446,
+            "summaryChars": 539,
             "schemaChars": 1139,
             "propertiesCount": 12
           },
           {
             "name": "process",
-            "summaryChars": 322,
+            "summaryChars": 416,
             "schemaChars": 1011,
             "propertiesCount": 12
           },
@@ -540,9 +542,21 @@
             "propertiesCount": 18
           },
           {
+            "name": "nodes",
+            "summaryChars": 173,
+            "schemaChars": 1589,
+            "propertiesCount": 32
+          },
+          {
+            "name": "cron",
+            "summaryChars": 4268,
+            "schemaChars": 7876,
+            "propertiesCount": 13
+          },
+          {
             "name": "message",
-            "summaryChars": 142,
-            "schemaChars": 7198,
+            "summaryChars": 131,
+            "schemaChars": 7186,
             "propertiesCount": 111
           },
           {
@@ -562,6 +576,12 @@
             "summaryChars": 225,
             "schemaChars": 3841,
             "propertiesCount": 21
+          },
+          {
+            "name": "gateway",
+            "summaryChars": 697,
+            "schemaChars": 537,
+            "propertiesCount": 13
           },
           {
             "name": "agents_list",
@@ -674,15 +694,21 @@
         ]
       }
     },
-    "inputTokens": 34222,
-    "outputTokens": 72,
-    "cacheRead": 7168,
+    "cacheRead": 9088,
     "cacheWrite": 0,
-    "estimatedCostUsd": 0.005011944000000001,
-    "totalTokens": 41390,
     "totalTokensFresh": true,
-    "endedAt": 1777880749765,
-    "runtimeMs": 7109
+    "lastTo": "telegram:5046974518",
+    "lastAccountId": "default",
+    "authProfileOverride": "deepseek:default",
+    "authProfileOverrideSource": "auto",
+    "authProfileOverrideCompactionCount": 0,
+    "contextTokens": 1000000,
+    "inputTokens": 16404,
+    "outputTokens": 34,
+    "estimatedCostUsd": 0.0025605440000000005,
+    "totalTokens": 25492,
+    "endedAt": 1777882663016,
+    "runtimeMs": 4208
   },
   "agent:main:telegram:slash:5046974518": {
     "sessionId": "601d1342-1c9e-4f2a-966d-0a94b8afb0fa",
