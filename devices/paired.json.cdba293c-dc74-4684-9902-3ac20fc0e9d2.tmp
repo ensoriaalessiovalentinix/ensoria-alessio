@@ -1,0 +1,75 @@
+{
+  "3c650d12854131d284d030eeda0eb931a7d924546c1645579c93b0e3e04fd7c7": {
+    "deviceId": "3c650d12854131d284d030eeda0eb931a7d924546c1645579c93b0e3e04fd7c7",
+    "publicKey": "_a2esuCq151PoA8cOxLbukR7PlIZQswMyCZLyXhHoKs",
+    "platform": "MacIntel",
+    "clientId": "openclaw-control-ui",
+    "clientMode": "webchat",
+    "role": "operator",
+    "roles": [
+      "operator"
+    ],
+    "scopes": [
+      "operator.admin",
+      "operator.read",
+      "operator.write",
+      "operator.approvals",
+      "operator.pairing"
+    ],
+    "approvedScopes": [
+      "operator.admin",
+      "operator.read",
+      "operator.write",
+      "operator.approvals",
+      "operator.pairing"
+    ],
+    "tokens": {
+      "operator": {
+        "token": "BpmaAg0h4qTT_fIaFSJA56NBPsd3pWCqm3JuOHIiAGY",
+        "role": "operator",
+        "scopes": [
+          "operator.admin",
+          "operator.approvals",
+          "operator.pairing",
+          "operator.read",
+          "operator.write"
+        ],
+        "createdAtMs": 1777323312562,
+        "lastUsedAtMs": 1777516909078
+      }
+    },
+    "createdAtMs": 1777323312561,
+    "approvedAtMs": 1777323312561
+  },
+  "f209b3152645a1882cde3bf5d17f0569fd70460508b4856924dbad10149d6cf0": {
+    "deviceId": "f209b3152645a1882cde3bf5d17f0569fd70460508b4856924dbad10149d6cf0",
+    "publicKey": "y_QdApWwObWYclEU0FJmGtkT2G_rTlUIWzO7gtF-qKA",
+    "platform": "darwin",
+    "clientId": "cli",
+    "clientMode": "probe",
+    "role": "operator",
+    "roles": [
+      "operator"
+    ],
+    "scopes": [
+      "operator.admin"
+    ],
+    "approvedScopes": [
+      "operator.admin"
+    ],
+    "tokens": {
+      "operator": {
+        "token": "jNdSNiyLTvX4dlHYU75SJPXjw9TYAveUpu_73IQGfTM",
+        "role": "operator",
+        "scopes": [
+          "operator.admin",
+          "operator.read",
+          "operator.write"
+        ],
+        "createdAtMs": 1777327190802
+      }
+    },
+    "createdAtMs": 1777327190802,
+    "approvedAtMs": 1777327190802
+  }
+}

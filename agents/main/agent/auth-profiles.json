@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "profiles": {
+    "deepseek:default": {
+      "type": "api_key",
+      "provider": "deepseek",
+      "key": "sk-cf622eb42b7a4dd68d3dd19c0c4a5fa5"
+    },
+    "openrouter:default": {
+      "type": "api_key",
+      "provider": "openrouter",
+      "key": "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"
+    }
+  }
+}

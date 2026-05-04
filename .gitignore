@@ -21,32 +21,25 @@ Thumbs.db
 # OpenClaw runtime — non committare
 logs/
 browser/
-canvas/
 completions/
 cron/
 delivery-queue/
-devices/
 exec-approvals.json
 media/
 plugin-runtime-deps/
 service-env/
-subagents/
 tasks/
 tmp/
 update-check.json
 acpx/
-agents/
-flows/
-identity/
-openclaw.json
+
+
+
+
 openclaw.json.bak
-openclaw.json.bak.*
-openclaw.json.*.bak
-openclaw.json.clobbered.*
 openclaw.json.last-good
 openclaw.yaml
 openclaw.yaml.bak
-openclaw.yaml.bak-*
 package-lock.json
 telegram/
 

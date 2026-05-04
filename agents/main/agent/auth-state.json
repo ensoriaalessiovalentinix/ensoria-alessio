@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "lastGood": {
+    "openrouter": "openrouter:default",
+    "deepseek": "deepseek:default"
+  },
+  "usageStats": {
+    "openrouter:default": {
+      "errorCount": 0,
+      "lastUsed": 1777803987567
+    },
+    "deepseek:default": {
+      "errorCount": 0,
+      "lastUsed": 1777880753287,
+      "lastFailureAt": 1777879982710
+    }
+  }
+}
